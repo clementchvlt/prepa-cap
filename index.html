@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="10km Metz">
+  <title>10km Metz · Programme</title>
+  <style>
+    :root {
+      --primary: #FF6B35;
+      --primary-light: #FFF0EB;
+      --success: #16A34A;
+      --success-light: #F0FDF4;
+      --success-border: #86EFAC;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --bg: #F3F4F6;
+      --white: #ffffff;
+      --gray-bg: #F9FAFB;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--white);
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .header-row { display: flex; align-items: center; justify-content: space-between; }
+    .header-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── WEEK NAV ── */
+    .week-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-btn {
+      background: none; border: 1px solid var(--border); border-radius: 10px;
+      padding: 7px 16px; font-size: 16px; color: var(--text); cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nav-btn:active { background: var(--bg); }
+    .nav-btn:disabled { opacity: 0.2; cursor: default; }
+    .week-info { text-align: center; flex: 1; padding: 0 8px; }
+    .week-id { font-weight: 800; font-size: 15px; color: var(--text); }
+    .week-dates { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .week-cycle { font-size: 11px; color: var(--primary); font-weight: 700; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+
+    /* ── VOLUME BAR ── */
+    .vol-bar {
+      background: var(--primary-light);
+      padding: 7px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .vol-text { font-size: 13py{ color: var(--primary); font-weight: 700; }
+    .vol-progress { font-size: 12px; color: var(--muted); }
+
+    /* ── SESSIONS ── */
+    .sessions { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+    .card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .card.done { border-color: var(--success-border); background: var(--success-light); }
+    .card.rest { background: var(--gray-bg); opacity: 0.6; border-color: var(--border); }
+    .card.today { border-color: var(--primary); border-width: 2px; }
+
+    .card-inner {
+      display: flex; align-items: flex-start;
+      padding: 13px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card.rest .card-inner { cursor: default; }
+
+    .card-check {
+      width: 24px; height: 24px; flex-shrink: 0;
+      border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 12px; margin-top: 1px;
+      background: var(--white); transition: all 0.2s;
+      font-size: 13px;
+    }
+    .card.done .card-check { background: var(--success); border-color: var(--success); color: white; }
+    .card.today .card-check { border-color: var(--primary); }
+    .card.rest .card-check { display: none; }
+
+    .card-content { flex: 1; min-width: 0; }
+    .card-day {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .card-day.today-day { color: var(--primary); }
+    .today-pill {
+      background: var(--primary); color: white;
+      font-size: 9px; font-weight: 800; padding: 2px 6px;
+      border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .card-name { font-size: 15px; font-weight: 700; margin-top: 3px; color: var(--text); }
+    .card-detail { font-size: 13px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
+    .card-allure {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 7px; background: var(--gray-bg);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 4px 9px; font-size: 12px; font-weight: 700; color: var(--text);
+    }
+    .card.done .card-allure { background: white; border-color: var(--success-border); }
+
+    /* ── COUNTDOWN ── */
+    .countdown {
+      margin: 4px 10px 12px;
+      background: var(--white); border-radius: 14px;
+      border: 1.5px solid var(--border); padding: 14px;
+      text-align: center;
+    }
+    .cd-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .cd-days { font-size: 34px; font-weight: 900; color: var(--primary); line-height: 1.1; margin: 4px 0; }
+    .cd-event { font-size: 13px; font-weight: 700; color: var(--text); }
+
+    /* ── INFO BANNER ── */
+    .info-banner {
+      margin: 8px 10px 0;
+      background: #EFF6FF; border: 1px solid #BFDBFE;
+      border-radius: 10px; padding: 9px 12px;
+      font-size: 12px; color: #1E40AF; line-height: 1.5;
+    }
+    .info-banner strong { font-weight: 700; }
+
+    /* ── ALLURES REF ── */
+    .allures-section { margin: 8px 10px 0; }
+    .allures-toggle {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 13px; font-weight: 700; color: var(--text);
+      cursor: pointer; width: 100%; text-align: left;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .allures-body {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-top: none; border-radius: 0 0 10px 10px;
+      padding: 10px 14px; display: none;
+    }
+    .allures-body.open { display: block; }
+    .allure-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--bg); font-size: 13px; }
+    .allure-row:last-child { border-bottom: none; }
+    .allure-row .zone { font-weight: 600; color: var(--text); }
+    .allure-row .pace { color: var(--primary); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <div class="header-title">🏃 10 km de Metz</div>
+  </div>
+  <div class="header-sub">Objectif : sub-45 (4:30/km) · 11 octobre 2026</div>
+</div>
+
+<div class="week-nav">
+  <button class="nav-btn" id="prev-btn" onclick="changeWeek(-1)">◀</button>
+  <div class="week-info">
+    <div class="week-id" id="week-id">–</div>
+    <div class="week-dates" id="week-dates">–</div>
+    <div class="week-cycle" id="week-cycle">–</div>
+  </div>
+  <button class="nav-btn" id="next-btn" onclick="changeWeek(1)">▶</button>
+</div>
+
+<div class="vol-bar">
+  <span class="vol-text" id="vol-text">–</span>
+  <span class="vol-progress" id="vol-progress">–</span>
+</div>
+
+<div id="sessions-container" class="sessions"></div>
+
+<div class="allures-section">
+  <button class="allures-toggle" onclick="toggleAllures(this)">
+    📐 Allures de référence <span id="allures-arrow">▼</span>
+  </button>
+  <div class="allures-body" id="allures-body">
+    <div class="allure-row"><span class="zone">EF</span><span class="pace">5:40 – 6:10 /km</span></div>
+    <div class="allure-row"><span class="zone">Sortie longue</span><span class="pace">5:30 – 5:50 /km</span></div>
+    <div class="allure-row"><span class="zone">Seuil 60'</span><span class="pace">4:45 – 4:50 /km</span></div>
+    <div class="allure-row"><span class="zone">Allure 10 km</span><span class="pace">4:28 – 4:32 /km</span></div>
+    <div class="allure-row"><span class="zone">VMA</span><span class="pace">3:35 – 3:42 /km</span></div>
+    <div class="allure-row"><span class="zone">Côtes</span><span class="pace">Effort VMA, 5-8% pente</span></div>
+  </div>
+</div>
+
+<div class="info-banner" id="info-banner"></div>
+
+<div class="countdown" id="countdown"></div>
+
+<script>
+const RACE_DATE = new Date("2026-10-11T00:00:00");
+const STORAGE_KEY = "metz10k_checks";
+
+const WEEKS = [
+  { id:"S1", cycle:"Cycle 1 — Endurance de force", start:"2026-06-15", volume:"~32 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Côtes 8×30\"",detail:"8×30\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
+    {day:"Jeu",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"Sortie Longue 1h",detail:"Sortie longue 1h00",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S2", cycle:"Cycle 1 — Endurance de force", start:"2026-06-22", volume:"~36 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Côtes 10×30\"",detail:"10×30\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
+    {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 50' + accélérations",detail:"EF 50 min + 4 lignes droites",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"Sortie Longue 1h05",detail:"Sortie longue 1h05",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S3", cycle:"Cycle 1 — Endurance de force", start:"2026-06-29", volume:"~40 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Côtes 8×45\"",detail:"8×45\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
+    {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"quali",label:"VMA 5×200",detail:"6×200 m @VMA, récup 1' trot",allure:"3:35–3:42 /km"},
+    {day:"Dim",type:"sl",label:"Sortie Longue 1h10",detail:"Sortie longue 1h10 vallonnée",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S4", cycle:"Cycle 1 — Semaine récup", start:"2026-07-06", volume:"~30 km ⟳", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Côtes 6×30\" légères",detail:"6×30\" côte légère, récup descente",allure:"Effort modéré"},
+    {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps"},
+    {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"Sortie Longue 55'",detail:"Sortie longue 55 min",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S5", cycle:"Cycle 1 — Endurance de force", start:"2026-07-13", volume:"~38 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Côtes longues 6×2'",detail:"6×2' côte longue, récup descente",allure:"~Allure 5 km en ressenti"},
+    {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps"},
+    {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"Sortie Longue 1h",detail:"Sortie longue 1h00 facile (pré-backyard)",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S6", cycle:"Semaine BACKYARD 🎒", start:"2026-07-20", volume:"Backyard sam 25/07", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"ef",label:"EF 40' + accélérations",detail:"EF 40' @5:50 + 4 lignes droites",allure:"5:50 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo LÉGER",detail:"Gainage + mobilité uniquement · pas de charges"},
+    {day:"Jeu",type:"ef",label:"EF 30' très facile",detail:"EF 30 min très facile",allure:"6:00+ /km"},
+    {day:"Ven",type:"repos",label:"Repos complet"},
+    {day:"Sam",type:"backyard",label:"🏕️ BACKYARD",detail:"Allure très lente (7:00+/km) · marche dans les boucles · mange et bois dès la 1ère heure",allure:"7:00+ /km"},
+    {day:"Dim",type:"repos",label:"Repos complet"}
+  ]},
+  { id:"S7", cycle:"Cycle 2 — Récup post-backyard", start:"2026-07-27", volume:"~22 km ⟳", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"repos",label:"Repos / vélo léger",detail:"Selon état des jambes — pas d'intensité"},
+    {day:"Mer",type:"repos",label:"Repos"},
+    {day:"Jeu",type:"ef",label:"EF 30-40'",detail:"EF 30-40 min si jambes OK",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h très facile",detail:"Sortie longue 1h00 très facile",allure:"6:00+ /km"}
+  ]},
+  { id:"S8", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-03", volume:"~42 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Seuil 2×15'",detail:"Seuil 2×15' @4:50, récup 3' trot",allure:"4:50 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
+    {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h15",detail:"Sortie longue 1h15",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S9", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-10", volume:"~46 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Seuil 2×20'",detail:"Seuil 2×20' @4:48, récup 3' trot",allure:"4:48 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
+    {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"quali",label:"VMA 8×400",detail:"8×400 m @3:40/km, récup 1'15 trot",allure:"3:40 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h15",detail:"Sortie longue 1h15",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S10", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-17", volume:"~48 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Seuil 3×15'",detail:"Seuil 3×15' @4:45, récup 2' trot",allure:"4:45 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
+    {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"quali",label:"VMA 10×300",detail:"10×300 m @VMA, récup 1' trot",allure:"3:35–3:42 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h20",detail:"SL 1h20, 15 dernières min @5:15",allure:"5:30 → 5:15 fin"}
+  ]},
+  { id:"S11", cycle:"Cycle 3 — Allure 10 km", start:"2026-08-24", volume:"~48 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Validation seuil 40-45'",detail:"Seuil 40-45' continu @4:48 · validation du cycle 2",allure:"4:48 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger · mobilité + gainage"},
+    {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h15",detail:"Sortie longue 1h15",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S12", cycle:"Cycle 3 — Récup", start:"2026-08-31", volume:"~36 km ⟳", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Intro pré-fatigue",detail:"10' @4:50 + 2×1000 @4:30",allure:"4:50 → 4:30 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
+    {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h",detail:"Sortie longue 1h00",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S13", cycle:"Cycle 3 — Pic de volume", start:"2026-09-07", volume:"~50 km 🔺", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 4×1000",detail:"20' @4:48 + 4×1000 @4:30, récup 1'15",allure:"4:48 → 4:30 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
+    {day:"Jeu",type:"ef",label:"EF 45' facile",detail:"EF 45 min facile · veille du test",allure:"5:50–6:00 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"test",label:"🏁 TEST 5 km",detail:"Test 5 km à fond ou course prépa · objectif < 21:00",allure:"< 4:12 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h10",detail:"Sortie longue 1h10",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S14", cycle:"Cycle 3 — Allure 10 km", start:"2026-09-14", volume:"~48 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 2×2000",detail:"15' @4:48 + 2×2000 @4:32, récup 2'",allure:"4:48 → 4:32 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
+    {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"quali",label:"VMA 6×400",detail:"6×400 m @3:40/km, rappel VMA",allure:"3:40 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h15 avec allure",detail:"SL 1h15, 2×10 min @4:35 intégrés",allure:"5:30 → 4:35 /km"}
+  ]},
+  { id:"S15", cycle:"Cycle 3 — Allure 10 km", start:"2026-09-21", volume:"~44 km", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 3×1000",detail:"20' @4:48 + 3×1000 @4:28, récup 1'15",allure:"4:48 → 4:28 /km"},
+    {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
+    {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 1h05 avec allure",detail:"SL 1h05, 10 dernières min @4:40",allure:"5:30 → 4:40 fin"}
+  ]},
+  { id:"S16", cycle:"Cycle 4 — Affûtage", start:"2026-09-28", volume:"~28 km (-40%)", sessions:[
+    {day:"Lun",type:"renfo",label:"Dernier renfo léger",detail:"Dernier renforcement de la prépa · léger"},
+    {day:"Mar",type:"quali",label:"Allure 10km 2×8'",detail:"2×(8' @4:30), récup 3'",allure:"4:30 /km"},
+    {day:"Mer",type:"repos",label:"Repos"},
+    {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"EF 35' + accélérations",detail:"EF 35 min + 4 lignes droites",allure:"5:50 /km"},
+    {day:"Dim",type:"sl",label:"SL 50'",detail:"Sortie longue 50 min",allure:"5:30–5:50 /km"}
+  ]},
+  { id:"S17", cycle:"Cycle 4 — Dernière ligne droite 🏁", start:"2026-10-05", volume:"~18 km + course", sessions:[
+    {day:"Lun",type:"repos",label:"Repos"},
+    {day:"Mar",type:"quali",label:"5×800 allure 10km",detail:"5×800 m @4:30/km, récup 1'30",allure:"4:30 /km"},
+    {day:"Mer",type:"repos",label:"Repos"},
+    {day:"Jeu",type:"ef",label:"EF 30' + accélérations",detail:"EF 30 min + 3 accélérations progressives",allure:"5:50 /km"},
+    {day:"Ven",type:"repos",label:"Repos"},
+    {day:"Sam",type:"ef",label:"Footing 15' + lignes",detail:"Footing 15 min + 3 lignes droites",allure:"Très facile"},
+    {day:"Dim",type:"race",label:"🏆 10 km de METZ",detail:"Km 1-3 : 4:32-4:34/km · Km 4-7 : 4:30/km · Km 8-10 : tout donner !",allure:"Objectif : sub-45 !"}
+  ]}
+];
+
+// ── STATE ──
+let currentWeekIdx = 0;
+let checks = {};
+
+function loadChecks() {
+  try { checks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch(e) { checks = {}; }
+}
+function saveChecks() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checks)); } catch(e) {}
+}
+function checkKey(weekIdx, sessionIdx) { return weekIdx + "_" + sessionIdx; }
+
+// ── HELPERS ──
+function parseDate(s) { return new Date(s + "T00:00:00"); }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function fmtDate(d) { return d.toLocaleDateString("fr-FR", { day:"numeric", month:"short" }); }
+
+function findCurrentWeekIdx() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < WEEKS.length; i++) {
+    const s = parseDate(WEEKS[i].start), e = addDays(s, 6);
+    if (today >= s && today <= e) return i;
+  }
+  return today < parseDate(WEEKS[0].start) ? 0 : WEEKS.length - 1;
+}
+
+// ── TOGGLE CHECK ──
+function toggleCheck(weekIdx, sessionIdx) {
+  const week = WEEKS[weekIdx];
+  const session = week.sessions[sessionIdx];
+  if (session.type === "repos") return;
+  const key = checkKey(weekIdx, sessionIdx);
+  checks[key] = !checks[key];
+  saveChecks();
+  renderWeek();
+}
+
+// ── TOGGLE ALLURES ──
+function toggleAllures(btn) {
+  const body = document.getElementById("allures-body");
+  const arrow = document.getElementById("allures-arrow");
+  body.classList.toggle("open");
+  arrow.textContent = body.classList.contains("open") ? "▲" : "▼";
+}
+
+// ── RENDER ──
+function renderWeek() {
+  const week = WEEKS[currentWeekIdx];
+  const startDate = parseDate(week.start);
+  const endDate = addDays(startDate, 6);
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  document.getElementById("week-id").textContent = week.id;
+  document.getElementById("week-dates").textContent = fmtDate(startDate) + " – " + fmtDate(endDate);
+  document.getElementById("week-cycle").textContent = week.cycle;
+  document.getElementById("prev-btn").disabled = currentWeekIdx === 0;
+  document.getElementById("next-btn").disabled = currentWeekIdx === WEEKS.length - 1;
+
+  const typeIcons = { repos:"😴", ef:"🏃", quali:"⚡", sl:"🌄", renfo:"🏋️", backyard:"🏕️", test:"🏁", race:"🏆" };
+
+  let doneCount = 0, totalNonRest = 0;
+
+  let html = "";
+  week.sessions.forEach((s, i) => {
+    const dateObj = addDays(startDate, i); dateObj.setHours(0,0,0,0);
+    const isToday = dateObj.getTime() === today.getTime();
+    const key = checkKey(currentWeekIdx, i);
+    const done = !!checks[key];
+
+    if (s.type !== "repos") { totalNonRest++; if (done) doneCount++; }
+
+    let cls = "card";
+    if (s.type === "repos") cls += " rest";
+    else if (done) cls += " done";
+    else if (isToday) cls += " today";
+
+    const icon = typeIcons[s.type] || "🏃";
+    const checkIcon = done ? "✓" : "";
+    const todayPill = isToday ? '<span class="today-pill">Aujourd\'hui</span>' : "";
+
+    html += `<div class="${cls}" onclick="toggleCheck(${currentWeekIdx},${i})">
+      <div class="card-inner">
+        ${s.type !== "repos" ? `<div class="card-check">${checkIcon}</div>` : ""}
+        <div class="card-content">
+          <div class="card-day ${isToday?"today-day":""}">${s.day} ${fmtDate(dateObj)} ${todayPill}</div>
+          <div class="card-name">${icon} ${s.label}</div>
+          ${s.detail && s.type !== "repos" ? `<div class="card-detail">${s.detail}</div>` : ""}
+          ${s.allure ? `<div class="card-allure">⏱ ${s.allure}</div>` : ""}
+        </div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById("sessions-container").innerHTML = html;
+
+  document.getElementById("vol-text").textContent = "Volume : " + week.volume;
+  document.getElementById("vol-progress").textContent = doneCount + "/" + totalNonRest + " séances ✓";
+
+  // Info banner
+  const isCurrentWeek = currentWeekIdx === findCurrentWeekIdx();
+  const infoEl = document.getElementById("info-banner");
+  if (isCurrentWeek) {
+    infoEl.innerHTML = "<strong>💡 Astuce :</strong> Touche une séance pour la cocher comme réalisée. Tes coches sont sauvegardées sur cet appareil.";
+    infoEl.style.display = "block";
+  } else {
+    infoEl.style.display = "none";
+  }
+
+  // Countdown
+  const diff = Math.ceil((RACE_DATE - new Date()) / 86400000);
+  document.getElementById("countdown").innerHTML =
+    `<div class="cd-label">Compte à rebours</div>
+     <div class="cd-days">${diff}</div>
+     <div class="cd-event">🏁 10 km de Metz · 11 octobre 2026</div>`;
+}
+
+function changeWeek(delta) {
+  currentWeekIdx = Math.max(0, Math.min(WEEKS.length - 1, currentWeekIdx + delta));
+  renderWeek();
+}
+
+// ── INIT ──
+loadChecks();
+currentWeekIdx = findCurrentWeekIdx();
+renderWeek();
+</script>
+</body>
+</html>
