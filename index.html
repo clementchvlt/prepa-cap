@@ -353,7 +353,7 @@ const WEEKS = [
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
     {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
-    {day:"Sam",type:"quali",label:"VMA 6C�400",detail:"6×400 m @3:40/km, rappel VMA",allure:"3:40 /km",echauff:"15' EF",rac:"10' trot"},
+    {day:"Sam",type:"quali",label:"VMA 6×400",detail:"6×400 m @3:40/km, rappel VMA",allure:"3:40 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Dim",type:"sl",label:"SL 1h15 avec allure",detail:"SL 1h15, 2×10 min @4:35 intégrés",allure:"5:30 → 4:35 /km"}
   ]},
   { id:"S15", cycle:"Cycle 3 — Allure 10 km", start:"2026-09-21", volume:"~44 km", sessions:[
@@ -366,7 +366,7 @@ const WEEKS = [
     {day:"Dim",type:"sl",label:"SL 1h05 avec allure",detail:"SL 1h05, 10 dernières min @4:40",allure:"5:30 → 4:40 fin"}
   ]},
   { id:"S16", cycle:"Cycle 4 — Affûtage", start:"2026-09-28", volume:"~28 km (-40%)", sessions:[
-    {day:"Lun",type:"renfo",label:"Dernier renfo léger",detail:"Dernier renforcement de la prépe · léger"},
+    {day:"Lun",type:"renfo",label:"Dernier renfo léger",detail:"Dernier renforcement de la prépa · léger"},
     {day:"Mar",type:"quali",label:"Allure 10km 2×8'",detail:"2×(8' @4:30), récup 3'",allure:"4:30 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"repos",label:"Repos"},
     {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
@@ -449,7 +449,8 @@ function renderWeek() {
 
   let html = "";
   week.sessions.forEach((s, i) => {
-    const dateObj = addDays(startDate, i); dateObj.setHours(0,0,0,0);t isToday = dateObj.getTime() === today.getTime();
+    const dateObj = addDays(startDate, i); dateObj.setHours(0,0,0,0);
+    const isToday = dateObj.getTime() === today.getTime();
     const key = checkKey(currentWeekIdx, i);
     const done = !!checks[key];
 
