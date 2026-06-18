@@ -124,6 +124,22 @@
     }
     .card.done .card-allure { background: white; border-color: var(--success-border); }
 
+    /* ── WARMUP / RAC ── */
+    .card-structure {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 9px; padding-top: 9px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .struct-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 7px; padding: 3px 8px; font-size: 11px; font-weight: 700;
+    }
+    .struct-pill.echauff { background: #E1F5EE; color: #0F6E56; }
+    .struct-pill.corps   { background: #FFF0EB; color: #993C1D; }
+    .struct-pill.rac     { background: #E6F1FB; color: #185FA5; }
+    .struct-arrow { font-size: 10px; color: var(--muted); }
+
     /* ── COUNTDOWN ── */
     .countdown {
       margin: 4px 10px 12px;
@@ -216,7 +232,7 @@ const STORAGE_KEY = "metz10k_checks";
 const WEEKS = [
   { id:"S1", cycle:"Cycle 1 — Endurance de force", start:"2026-06-15", volume:"~32 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Côtes 8×30\"",detail:"8×30\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mar",type:"quali",label:"Côtes 8×30\"",detail:"8×30\" côte, récup descente trot",allure:"Effort VMA en montée",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
     {day:"Jeu",type:"ef",label:"EF 45'",detail:"Endurance fondamentale 45 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -225,7 +241,7 @@ const WEEKS = [
   ]},
   { id:"S2", cycle:"Cycle 1 — Endurance de force", start:"2026-06-22", volume:"~36 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Côtes 10×30\"",detail:"10×30\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mar",type:"quali",label:"Côtes 10×30\"",detail:"10×30\" côte, récup descente trot",allure:"Effort VMA en montée",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
     {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -234,16 +250,16 @@ const WEEKS = [
   ]},
   { id:"S3", cycle:"Cycle 1 — Endurance de force", start:"2026-06-29", volume:"~40 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Côtes 8×45\"",detail:"8×45\" côte, récup descente trot",allure:"Effort VMA en montée"},
+    {day:"Mar",type:"quali",label:"Côtes 8×45\"",detail:"8×45\" côte, récup descente trot",allure:"Effort VMA en montée",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps charges élevées + gainage"},
     {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
-    {day:"Sam",type:"quali",label:"VMA 6×200",detail:"6×200 m @VMA, récup 1' trot",allure:"3:35–3:42 /km"},
+    {day:"Sam",type:"quali",label:"VMA 6×200",detail:"6×200 m @VMA, récup 1' trot",allure:"3:35–3:42 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Dim",type:"sl",label:"Sortie Longue 1h10",detail:"Sortie longue 1h10 vallonnée",allure:"5:30–5:50 /km"}
   ]},
   { id:"S4", cycle:"Cycle 1 — Semaine récup", start:"2026-07-06", volume:"~30 km ⟳", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Côtes 6×30\" légères",detail:"6×30\" côte légère, récup descente",allure:"Effort modéré"},
+    {day:"Mar",type:"quali",label:"Côtes 6×30\" légères",detail:"6×30\" côte légère, récup descente",allure:"Effort modéré",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps"},
     {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -252,7 +268,7 @@ const WEEKS = [
   ]},
   { id:"S5", cycle:"Cycle 1 — Endurance de force", start:"2026-07-13", volume:"~38 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Côtes longues 6×2'",detail:"6×2' côte longue, récup descente",allure:"~Allure 5 km en ressenti"},
+    {day:"Mar",type:"quali",label:"Côtes longues 6×2'",detail:"6×2' côte longue, récup descente",allure:"~Allure 5 km en ressenti",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo LOURD",detail:"Squat, fentes, soulevé de terre, mollets · 4-6 reps"},
     {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -279,7 +295,7 @@ const WEEKS = [
   ]},
   { id:"S8", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-03", volume:"~42 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Seuil 2×15'",detail:"Seuil 2×15' @4:50, récup 3' trot",allure:"4:50 /km"},
+    {day:"Mar",type:"quali",label:"Seuil 2×15'",detail:"Seuil 2×15' @4:50, récup 3' trot",allure:"4:50 /km",echauff:"20' EF",rac:"15' trot"},
     {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
     {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -288,25 +304,25 @@ const WEEKS = [
   ]},
   { id:"S9", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-10", volume:"~46 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Seuil 2×20'",detail:"Seuil 2×20' @4:48, récup 3' trot",allure:"4:48 /km"},
+    {day:"Mar",type:"quali",label:"Seuil 2×20'",detail:"Seuil 2×20' @4:48, récup 3' trot",allure:"4:48 /km",echauff:"20' EF",rac:"15' trot"},
     {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
     {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
-    {day:"Sam",type:"quali",label:"VMA 8×400",detail:"8×400 m @3:40/km, récup 1'15 trot",allure:"3:40 /km"},
+    {day:"Sam",type:"quali",label:"VMA 8×400",detail:"8×400 m @3:40/km, récup 1'15 trot",allure:"3:40 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Dim",type:"sl",label:"SL 1h15",detail:"Sortie longue 1h15",allure:"5:30–5:50 /km"}
   ]},
   { id:"S10", cycle:"Cycle 2 — Seuil 60'", start:"2026-08-17", volume:"~48 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Seuil 3×15'",detail:"Seuil 3×15' @4:45, récup 2' trot",allure:"4:45 /km"},
+    {day:"Mar",type:"quali",label:"Seuil 3×15'",detail:"Seuil 3×15' @4:45, récup 2' trot",allure:"4:45 /km",echauff:"20' EF",rac:"15' trot"},
     {day:"Mer",type:"renfo",label:"Renfo force-vitesse",detail:"Charges modérées, exécution explosive + pliométrie"},
     {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
-    {day:"Sam",type:"quali",label:"VMA 10×300",detail:"10×300 m @VMA, récup 1' trot",allure:"3:35–3:42 /km"},
+    {day:"Sam",type:"quali",label:"VMA 10×300",detail:"10×300 m @VMA, récup 1' trot",allure:"3:35–3:42 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Dim",type:"sl",label:"SL 1h20",detail:"SL 1h20, 15 dernières min @5:15",allure:"5:30 → 5:15 fin"}
   ]},
   { id:"S11", cycle:"Cycle 3 — Allure 10 km", start:"2026-08-24", volume:"~48 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Validation seuil 40-45'",detail:"Seuil 40-45' continu @4:48 · validation du cycle 2",allure:"4:48 /km"},
+    {day:"Mar",type:"quali",label:"Validation seuil 40-45'",detail:"Seuil 40-45' continu @4:48 · validation du cycle 2",allure:"4:48 /km",echauff:"20' EF",rac:"15' trot"},
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger · mobilité + gainage"},
     {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -315,7 +331,7 @@ const WEEKS = [
   ]},
   { id:"S12", cycle:"Cycle 3 — Récup", start:"2026-08-31", volume:"~36 km ⟳", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Intro pré-fatigue",detail:"10' @4:50 + 2×1000 @4:30",allure:"4:50 → 4:30 /km"},
+    {day:"Mar",type:"quali",label:"Intro pré-fatigue",detail:"10' @4:50 + 2×1000 @4:30",allure:"4:50 → 4:30 /km",echauff:"10' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
     {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -324,7 +340,7 @@ const WEEKS = [
   ]},
   { id:"S13", cycle:"Cycle 3 — Pic de volume", start:"2026-09-07", volume:"~50 km 🔺", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Pré-fatigue 4×1000",detail:"20' @4:48 + 4×1000 @4:30, récup 1'15",allure:"4:48 → 4:30 /km"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 4×1000",detail:"20' @4:48 + 4×1000 @4:30, récup 1'15",allure:"4:48 → 4:30 /km",echauff:"10' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
     {day:"Jeu",type:"ef",label:"EF 45' facile",detail:"EF 45 min facile · veille du test",allure:"5:50–6:00 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -333,16 +349,16 @@ const WEEKS = [
   ]},
   { id:"S14", cycle:"Cycle 3 — Allure 10 km", start:"2026-09-14", volume:"~48 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Pré-fatigue 2×2000",detail:"15' @4:48 + 2×2000 @4:32, récup 2'",allure:"4:48 → 4:32 /km"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 2×2000",detail:"15' @4:48 + 2×2000 @4:32, récup 2'",allure:"4:48 → 4:32 /km",echauff:"10' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
     {day:"Jeu",type:"ef",label:"EF 55'",detail:"Endurance fondamentale 55 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
-    {day:"Sam",type:"quali",label:"VMA 6×400",detail:"6×400 m @3:40/km, rappel VMA",allure:"3:40 /km"},
+    {day:"Sam",type:"quali",label:"VMA 6C�400",detail:"6×400 m @3:40/km, rappel VMA",allure:"3:40 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Dim",type:"sl",label:"SL 1h15 avec allure",detail:"SL 1h15, 2×10 min @4:35 intégrés",allure:"5:30 → 4:35 /km"}
   ]},
   { id:"S15", cycle:"Cycle 3 — Allure 10 km", start:"2026-09-21", volume:"~44 km", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"Pré-fatigue 3×1000",detail:"20' @4:48 + 3×1000 @4:28, récup 1'15",allure:"4:48 → 4:28 /km"},
+    {day:"Mar",type:"quali",label:"Pré-fatigue 3×1000",detail:"20' @4:48 + 3×1000 @4:28, récup 1'15",allure:"4:48 → 4:28 /km",echauff:"10' EF",rac:"10' trot"},
     {day:"Mer",type:"renfo",label:"Renfo entretien",detail:"Entretien léger"},
     {day:"Jeu",type:"ef",label:"EF 50'",detail:"Endurance fondamentale 50 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -350,8 +366,8 @@ const WEEKS = [
     {day:"Dim",type:"sl",label:"SL 1h05 avec allure",detail:"SL 1h05, 10 dernières min @4:40",allure:"5:30 → 4:40 fin"}
   ]},
   { id:"S16", cycle:"Cycle 4 — Affûtage", start:"2026-09-28", volume:"~28 km (-40%)", sessions:[
-    {day:"Lun",type:"renfo",label:"Dernier renfo léger",detail:"Dernier renforcement de la prépa · léger"},
-    {day:"Mar",type:"quali",label:"Allure 10km 2×8'",detail:"2×(8' @4:30), récup 3'",allure:"4:30 /km"},
+    {day:"Lun",type:"renfo",label:"Dernier renfo léger",detail:"Dernier renforcement de la prépe · léger"},
+    {day:"Mar",type:"quali",label:"Allure 10km 2×8'",detail:"2×(8' @4:30), récup 3'",allure:"4:30 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"repos",label:"Repos"},
     {day:"Jeu",type:"ef",label:"EF 40'",detail:"Endurance fondamentale 40 min",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -360,7 +376,7 @@ const WEEKS = [
   ]},
   { id:"S17", cycle:"Cycle 4 — Dernière ligne droite 🏁", start:"2026-10-05", volume:"~18 km + course", sessions:[
     {day:"Lun",type:"repos",label:"Repos"},
-    {day:"Mar",type:"quali",label:"5×800 allure 10km",detail:"5×800 m @4:30/km, récup 1'30",allure:"4:30 /km"},
+    {day:"Mar",type:"quali",label:"5×800 allure 10km",detail:"5×800 m @4:30/km, récup 1'30",allure:"4:30 /km",echauff:"15' EF",rac:"10' trot"},
     {day:"Mer",type:"repos",label:"Repos"},
     {day:"Jeu",type:"ef",label:"EF 30' + accélérations",detail:"EF 30 min + 3 accélérations progressives",allure:"5:50 /km"},
     {day:"Ven",type:"repos",label:"Repos"},
@@ -433,8 +449,7 @@ function renderWeek() {
 
   let html = "";
   week.sessions.forEach((s, i) => {
-    const dateObj = addDays(startDate, i); dateObj.setHours(0,0,0,0);
-    const isToday = dateObj.getTime() === today.getTime();
+    const dateObj = addDays(startDate, i); dateObj.setHours(0,0,0,0);t isToday = dateObj.getTime() === today.getTime();
     const key = checkKey(currentWeekIdx, i);
     const done = !!checks[key];
 
@@ -457,6 +472,13 @@ function renderWeek() {
           <div class="card-name">${icon} ${s.label}</div>
           ${s.detail && s.type !== "repos" ? `<div class="card-detail">${s.detail}</div>` : ""}
           ${s.allure ? `<div class="card-allure">⏱ ${s.allure}</div>` : ""}
+          ${s.echauff ? `<div class="card-structure">
+            <span class="struct-pill echauff">➡ Échauff. ${s.echauff}</span>
+            <span class="struct-arrow">·</span>
+            <span class="struct-pill corps">⚡ Corps</span>
+            <span class="struct-arrow">·</span>
+            <span class="struct-pill rac">↩ RAC ${s.rac}</span>
+          </div>` : ""}
         </div>
       </div>
     </div>`;
